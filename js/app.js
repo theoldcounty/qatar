@@ -21,6 +21,29 @@ var app = {
 						}
 					];
 
+		//this.data
+
+		var listingHolder = $('.listingresults');
+
+		var	rowTemplate = listingHolder.find('.row').eq(0).clone(true);
+	
+
+		listingHolder.empty();
+
+		//'.listingresults row'
+		console.log("this.data", this.data);
+
+		$.each(this.data, function(key, value) {
+			$(rowTemplate).find('.imgwrap img').attr("src", "images/assets/landscape/"+key+".jpg");
+			$(rowTemplate).find('h2').text(value["description"]);
+			$(rowTemplate).find('p').text(value["fulldescription"]);
+			
+			console.log("value", value);
+
+			//rowTemplate
+			listingHolder.append('<div class="row">'+$(rowTemplate).html()+'</div>');
+		});
+
 
 		$('[data-type="markers"]').each(function(index) {
 			$(this).addClass($(this).data("size"));
@@ -105,11 +128,7 @@ var app = {
 				prevButton: '.swiper-button-prev'
 		    });
 		    that.swipers.push(mySwiper);
-		});		
-	},
-	init: function(){
-		console.log("test");
-		var that = this;
+		});
 
 		$(".grid-item").click(function() {
 		  var isUnselected = $(this).hasClass("unselected");
@@ -123,23 +142,74 @@ var app = {
 			$(this).removeClass("selected").addClass("unselected");
 			$(this).find("input[type='checkbox']").prop('checked', false);
 		  }
-
+		});		
+	},
+	getItems: function(callback){
+		$.getJSON("http://localhost/qatar/codeigniter/Api/similarProperties/en", function(data) {
+			//console.log("data", data);
+			callback(data);
 		});
+	},
+	populateSelection: function(data){
+		//console.log("data", data);
+		
+		//store data
+		this.data = data["listings"];
+
+		var swiperHolder = $('.selectionform .swiper-wrapper');
+
+		/*
+		var $elem = swiperHolder.find('.swiper-slide').eq(0).empty();
+		    sldeTemplate = $elem.clone(true);
+			console.log("sldeTemplate", sldeTemplate);
+
+		var gridHolder = $('.selectionform .grid2')
+		var $elem = gridHolder.find('.grid-item').eq(0).empty();
+			gridTemplate = $elem.clone(true);
+			console.log("gridTemplate", gridTemplate);
+
+		console.log("gridHolder", gridHolder);
+		console.log("data", data);
+
+		//grid empty
+		gridHolder.empty();
+		*/
+
+		//empty the swiper
+		swiperHolder.empty();
+	  
+			$.each(data["listings"], function(key, val) {
+				swiperHolder.append('<div class="grid-item unselected"><input type="checkbox" name="items[]" value="'+key+'"><img src="images/assets/landscape/'+key+'.jpg"/></div>');			
+			});
+
+			var a = $('.selectionform .swiper-wrapper > div');
+
+			for( var i = 0; i < a.length; i+=9 ) {
+			    a.slice(i, i+9).wrapAll('<div class="swiper-slide"><div class="grid2" data-type="packery"></div></div>');
+			}
+
+	},
+	init: function(){
+		console.log("test");
+		var that = this;
+
 
 		that.togglePage("#page1");
 
 		this.validateForm1(function(msg){
 			console.log("next step", msg);
 			that.togglePage("#page2");
+			that.getItems(function(d){
+				that.populateSelection(d);
+				that.bindEvents();
+			});
 			
-			that.bindEvents();
 
 			$("#selectionForm").submit(function(){
 				event.preventDefault();
 			    console.log("Submitted");
 
 				that.togglePage("#page3");
-
 				that.mapHandler();
 			});
 
