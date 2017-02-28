@@ -70,7 +70,6 @@ var app = {
 			$(markerTemplate).find('.coverimg img').attr("src", "images/assets/square/"+key+".jpg");
 			$(markerTemplate).find('[data-type="curve"]').text(value["description"]);
 
-
 			console.log("value", value);
 			//var coords = getLocaleCoordinates(value["location"]);
 			//console.log("coords", coords["posy"]);
@@ -106,7 +105,6 @@ var app = {
 			$(rowTemplate).find('p').text(value["fulldescription"]);
 
 			//console.log("value", value);
-
 			//rowTemplate
 			listingHolder.append('<div class="row">'+$(rowTemplate).html()+'</div>');
 		});
@@ -199,8 +197,7 @@ var app = {
 
 		$(".grid-item").click(function() {
 		  var isUnselected = $(this).hasClass("unselected");
-
-		  console.log("simulate", that.count+1);
+		  //console.log("simulate", that.count+1);
 
 		  if(that.count + 1 > 5){
 		  	$('.selection .error').fadeIn();
@@ -221,8 +218,7 @@ var app = {
 		  }
 
 		  $('.selection .count').text(that.count);
-
-		  console.log("count", that.count);
+		  //console.log("count", that.count);
 		});
 
 	},
@@ -280,7 +276,7 @@ var app = {
 		swiperHolder.empty();
 	  
 			$.each(data["listings"], function(key, val) {
-				swiperHolder.append('<div class="grid-item unselected"><input type="checkbox" class="ids" name="items[]" value="'+key+'"><img src="images/assets/landscape/'+key+'.jpg"/></div>');			
+				swiperHolder.append('<div class="grid-item unselected"><div class="tickholder"></div><div class="textholder">'+val.description+'</div><input type="checkbox" class="ids" name="items[]" value="'+key+'"><img src="images/assets/landscape/'+key+'.jpg"/></div>');			
 			});
 
 			var a = $('.selectionform .swiper-wrapper > div');
