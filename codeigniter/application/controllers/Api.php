@@ -19,8 +19,6 @@ class Api extends CI_Controller {
 	 * @see https://codeigniter.com/user_guide/general/urls.html
 	 */
 
-
-
 	public function index(){
 		echo "in api controller constructor";
 	}
@@ -28,15 +26,30 @@ class Api extends CI_Controller {
 	//en
 	//ar
 
-	//1. Similar properties in your area have sold for [sold price 2016]
-	public function similarProperties($lang){
+	public function registerUser(){
+		$this->load->database();
+
+			$data = $_POST;
+
+		$query = $this->db->insert('register', $data);
+
+		$response = array(
+		    "register" => array(
+							    	"result" => $query
+								)
+		);
+
+		print_r(json_encode($response));
+
+		return $response;
+	}
+
+
+	public function getListings($lang){
 		
 		$this->load->database();
 	
-		$sql = "SELECT
-			*
-			FROM
-			listings";
+		$sql = "SELECT * FROM listings ORDER BY markerSize DESC";
 
 		/*	
 		$sql = "SELECT 
@@ -73,7 +86,11 @@ class Api extends CI_Controller {
 			$results[] = array(
 			 	"id" => $id,
 			 	"description" => $description,
-			 	"fulldescription" => $fulldescription
+			 	"fulldescription" => $fulldescription,
+			 	"location" => $row['location'],
+			 	"posx" => $row['posx'],
+			 	"posy" => $row['posy'],
+			 	"markerSize" => $row['markerSize']
 			);
 		}
 		

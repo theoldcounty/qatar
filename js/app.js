@@ -1,44 +1,111 @@
 
 var app = {
-	mapHandler: function(){
+	getSelections(choices){
+		var newData = Array();
+		var that = this;
 
+		console.log("choices", choices);
 
-		var locales = [
-						{
-							"location": "London",
-							"posx": 651,
-							"poxy": 571
-						},
-						{
-							"location": "Edingburgh",
-							"posx": 355,
-							"poxy": 192
-						},
-						{
-							"location": "xxxx",
-							"posx": 450,
-							"poxy": 252
-						}
-					];
+		$.each(that.data, function(i, v) {
+			if (choices.indexOf(v.id) !== -1) {
+				newData.push(v);
+			}
+		});
 
-		//this.data
-
-		var listingHolder = $('.listingresults');
-
-		var	rowTemplate = listingHolder.find('.row').eq(0).clone(true);
-	
-
-		listingHolder.empty();
+		return newData;
+	},
+	mapHandler: function(choices){
 
 		//'.listingresults row'
-		console.log("this.data", this.data);
+		var data = this.getSelections(choices);
 
-		$.each(this.data, function(key, value) {
+		/*
+		var locales = [
+			{
+				"location": "London",
+				"posx": "68%",
+				"posy": "51%",
+				"markerSize": "large"
+			},
+			{
+				"location": "Edingburgh",
+				"posx": "41%",
+				"posy": "19%",
+				"markerSize": "large"
+			},
+			{
+				"location": "Birmingham",
+				"posx": "50%",
+				"posy": "42%",
+				"markerSize": "small"
+			},
+			{
+				"location": "Manchester",
+				"posx": "58%",
+				"posy": "28%",
+				"markerSize": "small"
+			}
+		];
+		*/
+
+		//marker holder
+		var markerHolder = $('.markerholder');
+		var	markerTemplate = markerHolder.find('.marker').eq(0).clone(true);
+
+		/*
+		function getLocaleCoordinates(location){
+			var obj = "";
+			$.each(locales, function(i, v) {
+				if (v.location == location) {
+					obj = v;
+				}
+			});
+			return obj;
+		}
+		*/
+
+		//empty old dom
+		markerHolder.empty();
+		$.each(data, function(key, value) {
+			$(markerTemplate).find('.coverimg img').attr("src", "images/assets/square/"+key+".jpg");
+			$(markerTemplate).find('[data-type="curve"]').text(value["description"]);
+
+
+			console.log("value", value);
+			//var coords = getLocaleCoordinates(value["location"]);
+			//console.log("coords", coords["posy"]);
+
+			//markerTemplate
+			markerHolder.append('<div class="marker" data-type="markers" data-size="'+value["markerSize"]+'" data-pos-x="'+value["posx"]+'%" data-pos-y="'+value["posy"]+'%" data-id="'+value["id"]+'">'+$(markerTemplate).html()+'</div>');
+		});
+
+
+		//.markerholder
+		/*
+		<div class="marker" data-type="markers" data-size="large" data-pos-x="41%" data-pos-y="16%">
+			<div class="markerwrap">
+				<div class="pointer">
+					<div data-type="curve">some text that needs</div>
+					<div class="coverimg"><img src="images/assets/square/edinburgh_castle.jpg"></div>
+					<img class="markerpointer" src="images/marker.png">
+				</div>
+			</div>
+		</div>
+		*/
+
+		//listing holder
+		var listingHolder = $('.listingresults .list');
+		var	rowTemplate = listingHolder.find('.row').eq(0).clone(true);
+	
+		//empty old dom
+		listingHolder.empty();
+
+		$.each(data, function(key, value) {
 			$(rowTemplate).find('.imgwrap img').attr("src", "images/assets/landscape/"+key+".jpg");
 			$(rowTemplate).find('h2').text(value["description"]);
 			$(rowTemplate).find('p').text(value["fulldescription"]);
-			
-			console.log("value", value);
+
+			//console.log("value", value);
 
 			//rowTemplate
 			listingHolder.append('<div class="row">'+$(rowTemplate).html()+'</div>');
@@ -47,7 +114,7 @@ var app = {
 
 		$('[data-type="markers"]').each(function(index) {
 			$(this).addClass($(this).data("size"));
-			$(this).css("left", $(this).data("pos-x")).css("top", $(this).data("pos-y"))
+			$(this).css("left", $(this).data("pos-x")).css("top", $(this).data("pos-y")).css("z-index", index);
 		});
 
 		function getRandomNumber(s, e){
@@ -96,11 +163,11 @@ var app = {
 				.text(content);
 		}
 
-
 		$('[data-type="curve"]').each(function(index) {
 			curveme(this,index);
 		});
 	},
+	count:0,
 	bindEvents: function(){
 		var that = this;
 		$('[data-type="select"]').each(function(index) {
@@ -133,22 +200,56 @@ var app = {
 		$(".grid-item").click(function() {
 		  var isUnselected = $(this).hasClass("unselected");
 
+		  console.log("simulate", that.count+1);
+
+		  if(that.count + 1 > 5){
+		  	$('.selection .error').fadeIn();
+		  }else{
+		  	$('.selection .error').fadeOut();
+		  }
+
 		  if(isUnselected){
 		  	//remove unselected class -- add selected class
 			$(this).removeClass("unselected").addClass("selected");
-			$(this).find("input[type='checkbox']").prop('checked', true); 
+			$(this).find("input[type='checkbox']").prop('checked', true);
+			that.count++;
 		  }else{
 		  	//remove selected class -- add unselected class
 			$(this).removeClass("selected").addClass("unselected");
 			$(this).find("input[type='checkbox']").prop('checked', false);
+			that.count--;
 		  }
-		});		
+
+		  $('.selection .count').text(that.count);
+
+		  console.log("count", that.count);
+		});
+
 	},
 	getItems: function(callback){
-		$.getJSON("http://localhost/qatar/codeigniter/Api/similarProperties/en", function(data) {
+		//ar or en
+		var api = "http://localhost/qatar/codeigniter/Api/getListings/"+this.lang;
+		$.getJSON(api, function(data) {
 			//console.log("data", data);
 			callback(data);
 		});
+	},
+	registerUser: function(){
+
+		var data = { firstName: "John", surname: "Fisher", email: "xxx", flyingFrom: "xxx", selectionIds: "yyxxx", hasShared: "true" };
+		var dataType = "string";
+
+		var url = "http://localhost/qatar/codeigniter/Api/registerUser/";
+		$.ajax({
+		  type: "POST",
+		  url: url,
+		  data: data,
+		  success: function(msg){
+		  	console.log("msg", msg);
+		  },
+		  dataType: dataType
+		});
+
 	},
 	populateSelection: function(data){
 		//console.log("data", data);
@@ -179,7 +280,7 @@ var app = {
 		swiperHolder.empty();
 	  
 			$.each(data["listings"], function(key, val) {
-				swiperHolder.append('<div class="grid-item unselected"><input type="checkbox" name="items[]" value="'+key+'"><img src="images/assets/landscape/'+key+'.jpg"/></div>');			
+				swiperHolder.append('<div class="grid-item unselected"><input type="checkbox" class="ids" name="items[]" value="'+key+'"><img src="images/assets/landscape/'+key+'.jpg"/></div>');			
 			});
 
 			var a = $('.selectionform .swiper-wrapper > div');
@@ -193,24 +294,61 @@ var app = {
 		console.log("test");
 		var that = this;
 
+		//set language
+		this.lang = $("body").data("lang");
+
+		if(this.lang == "ar"){
+			//swap to arabic text
+			//data-ar
+
+			$('[data-ar]').each(function(index) {
+				var arabicText = $(this).data("ar");
+				console.log("arabic text", arabicText);
+				$(this).text(arabicText);
+
+				$(this).val(arabicText);
+			});
+
+		}
+
 
 		that.togglePage("#page1");
 
-		this.validateForm1(function(msg){
-			console.log("next step", msg);
+		this.validateForm1(function(data){
+			console.log("next step", data);
+
 			that.togglePage("#page2");
 			that.getItems(function(d){
 				that.populateSelection(d);
 				that.bindEvents();
 			});
 			
-
 			$("#selectionForm").submit(function(){
 				event.preventDefault();
 			    console.log("Submitted");
 
+				var data = $(this).serializeArray();
+				console.log("data 2", data);
+				
+				/*
+				console.log($('.ids:checked').serializeArray().join());
+				console.log($('.ids:checked').serialize());
+
+				console.log($('.ids:checked').serialize().join());
+				*/
+
+				var choices = $('.ids:checked').map(function(){ 
+					// return the value, which would be the collection element
+					return this.value; 
+					// get it as an array
+				}).get();
+				console.log("choices 1", choices);
+
+				//var choices = [3,4,6,7,8];
+				//console.log("choices 2", choices);
+
 				that.togglePage("#page3");
-				that.mapHandler();
+				that.mapHandler(choices);
 			});
 
 			//app.packers[0].layout();
@@ -235,8 +373,11 @@ var app = {
 				lastname: "Please enter your lastname",
 				email: "Please enter a valid email address"
 			},
-			submitHandler: function() {
-				callback("submitted!");
+			submitHandler: function(form) {
+				 console.log(form, $(form));
+				//var data = $(this).serialize();
+				//console.log("data 1", data);
+				callback("submitted");
 			}
 		});
 

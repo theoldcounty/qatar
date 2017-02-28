@@ -43,14 +43,17 @@
 	    font-size: 12px;
 	}
 
+	.ar .col{
+		text-align: right;
+	}
 
 	h1{
 		font-family: 'jotiabold';
 	}
 
 	h2{
-		font-family: 'jotiaregular';
-		font-size: 34px;
+		font-family: 'jotiabold';
+		font-size: 26px;
 	}
 
 	h3{
@@ -73,6 +76,7 @@
 		color: #ffffff;
 		font-family: 'jotialight';
 		font-size: 20px;
+    	margin-bottom: 20px;
 	}
 
 	.infowrap{
@@ -90,7 +94,6 @@
 		overflow: hidden;
 	}
 
-
 	footer{
 		background: #000000;
 		height: 110px;
@@ -99,7 +102,6 @@
 		z-index: 2;
 	    position: relative;
 	}
-
 
 	.formcontainer{
 		background: #812a52;
@@ -135,6 +137,9 @@
 		color: #ffffff;
 	    border: 0;
 	    padding: 10px;
+		font-family: 'jotiabold';
+		font-size: 20px;
+		text-transform: uppercase;
 	}
 
 	label.error{
@@ -181,12 +186,9 @@
 		line-height:50px;
 	}
 
-
-
 	.unselected{
 		opacity:0.8;
 	}
-
 
 	.swiper-container{
 		width: 320px;
@@ -237,11 +239,11 @@
 		left: 0;
 	}
 
+
 	.imgwrap{
-		height: 211px;
-		width: 354px;
+		width: 100%;
+		height: auto;
 		overflow:hidden;
-		margin-bottom: 40px;
 	}
 
 	.imgwrap img{
@@ -271,9 +273,6 @@
 		margin-left: -30%;
 	}
 
-	.map{
-		width: 100%;
-	}
 
 	.pointer{
 		/*background: orange;*/
@@ -332,15 +331,54 @@
 	.listingresults{
 		background: #662044;
     	color: #ffffff;
+    	font-family: 'jotiaregular';
+    	font-size: 14px;
 	}
+
 	.listingresults h2{
-	    border-top: 1px solid #ffffff;
+	    border-top: 0;
 	    margin: 0;
 	    margin-bottom: 10px;
 	    padding-top: 10px;
 	}
 
-	@media screen and (min-width: 768px) {	 
+	.listingresults h3{
+		text-align: center;
+	}
+
+	.list{
+		padding: 20px;
+	}
+
+	.list .row{
+		margin-bottom: 40px;
+		border-bottom: 3px solid #ffffff;
+		padding-bottom: 20px;
+	}
+
+
+	.mapwrap{
+		position: relative;
+		height: 900px;
+    	overflow: hidden;
+	}
+
+	.mapholder{
+	    margin-left: -30%;
+	    position: relative;
+	}
+
+	.map{
+		height: 100%;
+		width: auto;
+	}	
+
+	@media screen and (min-width: 768px) {
+
+		h2{
+			font-size: 34px;
+		}
+
 		.wrap{
 			margin-left: 160px;
 			margin-right: 160px;
@@ -355,6 +393,33 @@
 			width: 200px;
 			height: 105px;
 		}
+
+		.imgwrap{
+			width: 100%;
+			height: auto;
+		}
+
+		.mapholder{
+			margin-left:0;
+		}
+
+		.listingresults{
+	    	font-size: 18px;
+		}
+
+		.listingresults h2{
+		    border-top: 3px solid #ffffff;
+		}
+
+		.list{
+			padding: 75px;
+		}
+
+		.list .row{
+			border-bottom: 0;
+			padding-bottom: 0;
+		}
+
 	}
 
 	@media screen and (min-width: 1400px) {
