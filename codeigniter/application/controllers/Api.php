@@ -29,9 +29,21 @@ class Api extends CI_Controller {
 	public function registerUser(){
 		$this->load->database();
 
-			$data = $_POST;
+		$data = $_POST;
 
-		$query = $this->db->insert('register', $data);
+		$id = $data['sessionId'];
+
+		$this->db->where('sessionId',$id);
+		$q = $this->db->get('register');
+
+		if ($q->num_rows() > 0) 
+		{
+			$this->db->where('sessionId',$id);
+			$this->db->update('register',$data);
+		} else {
+			$this->db->set('sessionId', $id);
+			$this->db->insert('register',$data);
+		}
 
 		$response = array(
 		    "register" => array(
@@ -46,7 +58,7 @@ class Api extends CI_Controller {
 
 
 	public function getListings($lang){
-		
+		 
 		$this->load->database();
 	
 		$sql = "SELECT * FROM listings ORDER BY markerSize DESC";

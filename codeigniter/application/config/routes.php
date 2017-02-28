@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+$route['(:any)'] = 'welcome/index/$1';
+
 /*
 | -------------------------------------------------------------------------
 | URI ROUTING
