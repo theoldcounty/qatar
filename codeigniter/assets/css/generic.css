@@ -67,8 +67,8 @@
 	}
 
 	.wrap{
-		margin-left:50px;
-		margin-right:50px;
+		margin-left:25px;
+		margin-right:25px;
 	}
 
 	.infocontainer{
@@ -170,8 +170,9 @@
 	    margin-right: auto;
 	}
 
+
 	select{		
-		width: 300px;
+		width: 100%;
 	}
 	.select2.select2-container--default{
 		font-family: 'jotiaregular';
@@ -192,7 +193,7 @@
 	}
 
 	.swiper-container{
-		width: 320px;
+		width: 294px;
 		height: 350px;
 
 		/*background: gold;*/
@@ -224,7 +225,7 @@
 
 
 	.grid-item {
-	    width: 110px;
+	    width: 102px;
 	    height: 60px;
 		position: relative;
 		overflow: hidden;
@@ -411,14 +412,29 @@
 	}
 
 	.mapholder{
-	    margin-left: -30%;
-	    position: relative;
+	    text-align: center;
 	}
 
-	.map{
-		height: 100%;
-		width: auto;
-	}	
+
+	.markerholder{
+		border: 1px solid red;
+	    width: 769px;
+	    height: 900px;
+	    position: relative;
+	    z-index: 1;
+	    left: 50%;
+	    margin-left: -384.5px;
+	}
+
+	.map {
+	    border: 1px solid grey;
+	    width: 769px;
+	    position: absolute;
+	    left: 50%;
+	    margin-left: -384.5px;
+    	z-index: 0;
+    	top:0;
+	}
 
 	@media screen and (min-width: 768px) {
 
@@ -446,9 +462,14 @@
 			height: auto;
 		}
 
+		select{		
+			width: 300px;
+		}
+
+		/*
 		.mapholder{
 			margin-left:0;
-		}
+		}*/
 
 		.listingresults{
 	    	font-size: 18px;

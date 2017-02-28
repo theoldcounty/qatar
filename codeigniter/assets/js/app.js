@@ -21,8 +21,6 @@ var app = {
 		var newData = Array();
 		var that = this;
 
-		console.log("choices", choices);
-
 		$.each(that.data, function(i, v) {
 			if (choices.indexOf(v.id) !== -1) {
 				newData.push(v);
@@ -32,54 +30,12 @@ var app = {
 		return newData;
 	},
 	mapHandler: function(choices){
-
 		//'.listingresults row'
 		var data = this.getSelections(choices);
-
-		/*
-		var locales = [
-			{
-				"location": "London",
-				"posx": "68%",
-				"posy": "51%",
-				"markerSize": "large"
-			},
-			{
-				"location": "Edingburgh",
-				"posx": "41%",
-				"posy": "19%",
-				"markerSize": "large"
-			},
-			{
-				"location": "Birmingham",
-				"posx": "50%",
-				"posy": "42%",
-				"markerSize": "small"
-			},
-			{
-				"location": "Manchester",
-				"posx": "58%",
-				"posy": "28%",
-				"markerSize": "small"
-			}
-		];
-		*/
-
+		
 		//marker holder
 		var markerHolder = $('.markerholder');
 		var	markerTemplate = markerHolder.find('.marker').eq(0).clone(true);
-
-		/*
-		function getLocaleCoordinates(location){
-			var obj = "";
-			$.each(locales, function(i, v) {
-				if (v.location == location) {
-					obj = v;
-				}
-			});
-			return obj;
-		}
-		*/
 
 		//empty old dom
 		markerHolder.empty();
@@ -87,27 +43,9 @@ var app = {
 			$(markerTemplate).find('.coverimg img').attr("src", "assets/images/assets/square/"+key+".jpg");
 			$(markerTemplate).find('[data-type="curve"]').text(value["description"]);
 
-			console.log("value", value);
-			//var coords = getLocaleCoordinates(value["location"]);
-			//console.log("coords", coords["posy"]);
-
 			//markerTemplate
 			markerHolder.append('<div class="marker" data-type="markers" data-size="'+value["markerSize"]+'" data-pos-x="'+value["posx"]+'%" data-pos-y="'+value["posy"]+'%" data-id="'+value["id"]+'">'+$(markerTemplate).html()+'</div>');
 		});
-
-
-		//.markerholder
-		/*
-		<div class="marker" data-type="markers" data-size="large" data-pos-x="41%" data-pos-y="16%">
-			<div class="markerwrap">
-				<div class="pointer">
-					<div data-type="curve">some text that needs</div>
-					<div class="coverimg"><img src="images/assets/square/edinburgh_castle.jpg"></div>
-					<img class="markerpointer" src="images/marker.png">
-				</div>
-			</div>
-		</div>
-		*/
 
 		//listing holder
 		var listingHolder = $('.listingresults .list');
@@ -125,7 +63,6 @@ var app = {
 			//rowTemplate
 			listingHolder.append('<div class="row">'+$(rowTemplate).html()+'</div>');
 		});
-
 
 		$('[data-type="markers"]').each(function(index) {
 			$(this).addClass($(this).data("size"));
@@ -214,7 +151,6 @@ var app = {
 
 		$(".grid-item").click(function() {
 		  var isUnselected = $(this).hasClass("unselected");
-		  //console.log("simulate", that.count+1);
 
 		  if(that.count + 1 > 5){
 		  	$('.selection .error').fadeIn();
@@ -235,30 +171,22 @@ var app = {
 		  }
 
 		  $('.selection .count').text(that.count);
-		  //console.log("count", that.count);
 		});
 
 	},
 	getItems: function(callback){
 		//ar or en
-		var api = "http://localhost/qatar/codeigniter/Api/getListings/"+this.lang;
+		var api = "Api/getListings/"+this.lang;
 		$.getJSON(api, function(data) {
-			//console.log("data", data);
 			callback(data);
 		});
 	},
 	registerUser: function(data){
-
-		//var data = { firstName: "John", surname: "Fisher", email: "xxx", flyingFrom: "xxx", selectionIds: "yyxxx", hasShared: "true" };
-		
 		data["sessionId"] = this.sessionId;
-		//data.push(["session", "xx"]);
-
-		console.log("data", data);
 
 		var dataType = "string";
 
-		var url = "http://localhost/qatar/codeigniter/Api/registerUser/";
+		var url = "Api/registerUser/";
 		$.ajax({
 		  type: "POST",
 		  url: url,
@@ -268,11 +196,8 @@ var app = {
 		  },
 		  dataType: dataType
 		});
-
 	},
-	populateSelection: function(data){
-		//console.log("data", data);
-		
+	populateSelection: function(data){		
 		//store data
 		this.data = data["listings"];
 
@@ -307,10 +232,8 @@ var app = {
 			for( var i = 0; i < a.length; i+=9 ) {
 			    a.slice(i, i+9).wrapAll('<div class="swiper-slide"><div class="grid2" data-type="packery"></div></div>');
 			}
-
 	},
 	init: function(){
-		console.log("test");
 		var that = this;
 
 		//set language
@@ -325,20 +248,15 @@ var app = {
 
 			$('[data-ar]').each(function(index) {
 				var arabicText = $(this).data("ar");
-				console.log("arabic text", arabicText);
+				//console.log("arabic text", arabicText);
 				$(this).text(arabicText);
-
 				$(this).val(arabicText);
 			});
-
 		}
-
 
 		that.togglePage("#page1");
 
 		this.validateForm1(function(data){
-			console.log("next step", data);
-
 			that.registerUser(data);
 
 			that.togglePage("#page2");
@@ -349,51 +267,27 @@ var app = {
 			
 			$("#selectionForm").submit(function(){
 				event.preventDefault();
-			    console.log("Submitted");
-
-			    //var data = JSON.stringify($(form).serializeArray());
-				//var data = $(this).serializeArray();
-
-				console.log("$(this)", $(this));
 
 				var data = JSON.parse(JSON.stringify($(this).serializeObject()));
 				
 				var items = data["items[]"];
 				delete data["items[]"];
-				
-				console.log("items", items.join());
+
 				data["items"] = items.join();
-				console.log("data 2", data);
 				that.registerUser(data);
 				
-				/*
-				console.log($('.ids:checked').serializeArray().join());
-				console.log($('.ids:checked').serialize());
-
-				console.log($('.ids:checked').serialize().join());
-				*/
-
 				var choices = $('.ids:checked').map(function(){ 
 					// return the value, which would be the collection element
 					return this.value; 
 					// get it as an array
 				}).get();
-				console.log("choices 1", choices);
-
-				//var choices = [3,4,6,7,8];
-				//console.log("choices 2", choices);
 
 				that.togglePage("#page3");
 				that.mapHandler(choices);
 			});
-
-			//app.packers[0].layout();
-			//pckry.reloadItems();
 		})
-
 	},
 	validateForm1: function(callback){
-
 		// validate signup form on keyup and submit
 		$("#signupForm").validate({
 			rules: {
@@ -409,24 +303,17 @@ var app = {
 				lastname: "Please enter your lastname",
 				email: "Please enter a valid email address"
 			},
-			submitHandler: function(form) {
-				console.log(form, $(form));
-				//var data = $(form).serialize();
-			    
+			submitHandler: function(form) {			    
 			    var data = JSON.parse(JSON.stringify($(form).serializeObject()));
-				console.log("data 1", data);
-				
 				callback(data);
 			}
 		});
-
 	},
 	togglePage: function(page){
 		$(".pages").hide();
 		$(page).fadeIn(400);
 	}
 };
-
 
 $(document).ready(function() {
 	app.init();

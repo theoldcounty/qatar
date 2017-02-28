@@ -40,6 +40,8 @@ class Api extends CI_Controller {
 		{
 			$this->db->where('sessionId',$id);
 			$this->db->update('register',$data);
+
+			$this->sendEmail();//send an email
 		} else {
 			$this->db->set('sessionId', $id);
 			$this->db->insert('register',$data);
@@ -57,11 +59,55 @@ class Api extends CI_Controller {
 	}
 
 
+	public function sendEmail(){
+		$to = 'rob.shan.lone@gmail.com';
+		$subject = "Thanks for Entering the competition";
+
+		$htmlContent = '
+		    <html>
+		    <head>
+		        <title>Welcome to CodexWorld</title>
+		    </head>
+		    <body>
+		        <h1>Thanks you for joining with us!</h1>
+		        <table cellspacing="0" style="border: 2px dashed #FB4314; width: 300px; height: 200px;">
+		            <tr>
+		                <th>Name:</th><td>CodexWorld</td>
+		            </tr>
+		            <tr style="background-color: #e0e0e0;">
+		                <th>Email:</th><td>contact@codexworld.com</td>
+		            </tr>
+		            <tr>
+		                <th>Website:</th><td><a href="http://www.codexworld.com">www.codexworld.com</a></td>
+		            </tr>
+		        </table>
+		    </body>
+		    </html>';
+
+		// Set content-type header for sending HTML email
+		$headers = "MIME-Version: 1.0" . "\r\n";
+		$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+
+		// Additional headers
+		$headers .= 'From: Visit Britain<sender@example.com>' . "\r\n";
+		//$headers .= 'Cc: welcome@example.com' . "\r\n";
+		//$headers .= 'Bcc: welcome2@example.com' . "\r\n";
+
+		// Send email
+		if(mail($to,$subject,$htmlContent,$headers)):
+		    $successMsg = 'Email has sent successfully.';
+		else:
+		    $errorMsg = 'Email sending fail.';
+		endif;
+
+	}
+
+
 	public function getListings($lang){
 		 
 		$this->load->database();
 	
-		$sql = "SELECT * FROM listings ORDER BY markerSize DESC";
+		$sql = "SELECT * FROM listings ORDER BY markerSize ASC";
 
 		/*	
 		$sql = "SELECT 
